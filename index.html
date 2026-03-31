@@ -219,7 +219,7 @@
         
         let ptr = dmsToDd(parseFloat(document.getElementById('ptr_'+prefix).value) || 0);
 
-        // Purata Ufuk ke Matahari (Ditambah +180 seperti yang diminta)
+        // Purata Ufuk ke Matahari (Ditambah +180)
         let purataHz = ((h1 + h2 + (h3 - 180) + (h4 - 180)) / 4) + 180;
         while (purataHz < 0) purataHz += 360;
         while (purataHz >= 360) purataHz -= 360;
@@ -244,7 +244,6 @@
         let az_dd = Math.acos(cosA) * 180 / Math.PI;
         
         // --- FORMULA BEARING GRID ---
-        // Formula: Purata TR + Azimut Matahari - Purata Ufuk ke Matahari + Tirusan
         let bearingGrid = ptr + az_dd - purataHz + tirusanDd;
         while (bearingGrid < 0) bearingGrid += 360;
         while (bearingGrid >= 360) bearingGrid -= 360;
@@ -274,9 +273,9 @@
             document.getElementById('resAz_s2').innerText = ddToDmsStr(s2.az);
             document.getElementById('resGrid_s2').innerText = ddToDmsStr(s2.grid);
 
-            // Perbandingan & Rumusan
-            let diff = Math.abs(s1.grid - s2.grid) * 3600;
-            document.getElementById('diffAz').innerText = Math.round(diff) + " saat";
+            // --- BAHAGIAN YANG DIUBAH: Beza Bearing Grid dalam format DMS ---
+            let diffDd = Math.abs(s1.grid - s2.grid);
+            document.getElementById('diffAz').innerText = ddToDmsStr(diffDd);
             
             let finalAvg = (s1.grid + s2.grid) / 2;
             document.getElementById('finalAverage').innerText = ddToDmsStr(finalAvg);
