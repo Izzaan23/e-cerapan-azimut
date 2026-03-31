@@ -14,6 +14,7 @@
         .table-header { background-color: #e9ecef; font-weight: bold; text-align: center; font-size: 0.8rem; }
         .result-val { color: #0d6efd; font-weight: bold; }
         .summary-card { background-color: #fff3cd; border: 2px solid #ffc107; }
+        .section-title { border-left: 5px solid #0d6efd; padding-left: 10px; margin-bottom: 15px; font-weight: bold; color: #333; }
     </style>
 </head>
 <body>
@@ -21,6 +22,35 @@
 <div class="container-fluid">
     <h2 class="text-center mb-1">JABATAN KEJURUTERAAN GEOMATIK</h2>
     <h4 class="text-center text-muted mb-4">Sistem E-Cerapan Azimut (Lampiran K1 - 4 Bacaan)</h4>
+
+    <div class="card">
+        <div class="card-header bg-dark">DATA KOORDINAT & TITIK ORIGIN</div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Koordinat Origin U (N)</label>
+                    <input type="number" step="any" id="orig_u" class="form-control" placeholder="133453.780">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Koordinat Origin T (E)</label>
+                    <input type="number" step="any" id="orig_t" class="form-control" placeholder="0.000">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Stesen U (N)</label>
+                    <input type="number" step="any" id="stn_u" class="form-control" placeholder="103556.237">
+                </div>
+                <div class="col-md-3">
+                    <label class="form-label fw-bold">Stesen T (E)</label>
+                    <input type="number" step="any" id="stn_t" class="form-control" placeholder="34000.252">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold text-danger">Tirusan / C-Correction (ddd.mmss)</label>
+                    <input type="number" step="any" id="tirusan" class="form-control" placeholder="-0.0128">
+                    <small class="text-muted">*Masukkan nilai negatif jika perlu (cth: -0.0128 untuk -0° 01' 28")</small>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-xl-6">
@@ -50,6 +80,10 @@
                             <td><input type="text" id="t4_s1" placeholder="t4"></td><td>P.Ka</td>
                             <td><input type="number" step="any" id="h4_s1" placeholder="Hz4"></td>
                             <td><input type="number" step="any" id="v4_s1" placeholder="V4"></td>
+                        </tr>
+                        <tr class="table-light">
+                            <td colspan="2" class="text-center fw-bold">Purata T.R (Set 1)</td>
+                            <td colspan="2"><input type="number" step="any" id="ptr_s1" placeholder="20.0000"></td>
                         </tr>
                     </table>
                 </div>
@@ -84,6 +118,10 @@
                             <td><input type="number" step="any" id="h4_s2" placeholder="Hz4"></td>
                             <td><input type="number" step="any" id="v4_s2" placeholder="V4"></td>
                         </tr>
+                        <tr class="table-light">
+                            <td colspan="2" class="text-center fw-bold">Purata T.R (Set 2)</td>
+                            <td colspan="2"><input type="number" step="any" id="ptr_s2" placeholder="20.0000"></td>
+                        </tr>
                     </table>
                 </div>
             </div>
@@ -115,9 +153,11 @@
             <div class="card">
                 <div class="card-header">HASIL KIRAAN SET 1</div>
                 <div class="card-body">
-                    Purata Ufuk (B): <span id="resB_s1" class="result-val">-</span><br>
+                    Purata Ufuk (Matahari): <span id="resB_s1" class="result-val">-</span><br>
                     Purata Altitud (D): <span id="resD_s1" class="result-val">-</span><br>
-                    <strong>Azimut Matahari: <span id="resAz_s1" class="result-val">-</span></strong>
+                    Azimut Matahari (Az): <span id="resAz_s1" class="result-val">-</span><br>
+                    <hr>
+                    <strong>Bearing Grid TR: <span id="resGrid_s1" class="text-success fw-bold">-</span></strong>
                 </div>
             </div>
         </div>
@@ -125,9 +165,11 @@
             <div class="card">
                 <div class="card-header">HASIL KIRAAN SET 2</div>
                 <div class="card-body">
-                    Purata Ufuk (B): <span id="resB_s2" class="result-val">-</span><br>
+                    Purata Ufuk (Matahari): <span id="resB_s2" class="result-val">-</span><br>
                     Purata Altitud (D): <span id="resD_s2" class="result-val">-</span><br>
-                    <strong>Azimut Matahari: <span id="resAz_s2" class="result-val">-</span></strong>
+                    Azimut Matahari (Az): <span id="resAz_s2" class="result-val">-</span><br>
+                    <hr>
+                    <strong>Bearing Grid TR: <span id="resGrid_s2" class="text-success fw-bold">-</span></strong>
                 </div>
             </div>
         </div>
@@ -135,20 +177,23 @@
 
     <div class="card summary-card">
         <div class="card-body text-center">
-            <h5 class="fw-bold">RUMUSAN PERBANDINGAN</h5>
-            <p class="mb-1">Beza Antara Set: <span id="diffAz" class="fw-bold text-danger">-</span></p>
-            <h4 class="mb-0 text-primary">PURATA AZIMUT GRID: <span id="finalAverage">00° 00' 00"</span></h4>
+            <h5 class="fw-bold">RUMUSAN AKHIR (PURATA SET 1 & 2)</h5>
+            <p class="mb-1">Beza Bearing Grid Antara Set: <span id="diffAz" class="fw-bold text-danger">-</span></p>
+            <h4 class="mb-0 text-primary">PURATA BEARING GRID KE T.R: <span id="finalAverage">00° 00' 00"</span></h4>
         </div>
     </div>
 </div>
 
 <script>
     function dmsToDd(val) {
-        if (!val) return 0;
-        let d = Math.floor(val);
-        let m = Math.floor((val - d) * 100);
-        let s = (val - d - (m / 100)) * 10000;
-        return d + (m / 60) + (s / 3600);
+        if (!val && val !== 0) return 0;
+        let isNegative = val < 0;
+        let absVal = Math.abs(val);
+        let d = Math.floor(absVal);
+        let m = Math.floor((absVal - d) * 100);
+        let s = (absVal - d - (m / 100)) * 10000;
+        let dd = d + (m / 60) + (s / 3600);
+        return isNegative ? -dd : dd;
     }
 
     function ddToDmsStr(dd) {
@@ -158,26 +203,27 @@
         let s = Math.round((absDd - d - (m / 60)) * 3600);
         if (s >= 60) { s = 0; m++; }
         if (m >= 60) { m = 0; d++; }
-        return d + "° " + m + "' " + s + "\"";
+        return (dd < 0 ? "-" : "") + d + "° " + m + "' " + s + "\"";
     }
 
-    function hitungSet(prefix, lat, delta) {
-        // Ambil semua 4 bacaan Hz dan V
-        let h1 = dmsToDd(parseFloat(document.getElementById('h1_'+prefix).value));
-        let h2 = dmsToDd(parseFloat(document.getElementById('h2_'+prefix).value));
-        let h3 = dmsToDd(parseFloat(document.getElementById('h3_'+prefix).value));
-        let h4 = dmsToDd(parseFloat(document.getElementById('h4_'+prefix).value));
+    function hitungSet(prefix, lat, delta, tirusanDd) {
+        let h1 = dmsToDd(parseFloat(document.getElementById('h1_'+prefix).value) || 0);
+        let h2 = dmsToDd(parseFloat(document.getElementById('h2_'+prefix).value) || 0);
+        let h3 = dmsToDd(parseFloat(document.getElementById('h3_'+prefix).value) || 0);
+        let h4 = dmsToDd(parseFloat(document.getElementById('h4_'+prefix).value) || 0);
 
-        let v1 = dmsToDd(parseFloat(document.getElementById('v1_'+prefix).value));
-        let v2 = dmsToDd(parseFloat(document.getElementById('v2_'+prefix).value));
-        let v3 = dmsToDd(parseFloat(document.getElementById('v3_'+prefix).value));
-        let v4 = dmsToDd(parseFloat(document.getElementById('v4_'+prefix).value));
+        let v1 = dmsToDd(parseFloat(document.getElementById('v1_'+prefix).value) || 0);
+        let v2 = dmsToDd(parseFloat(document.getElementById('v2_'+prefix).value) || 0);
+        let v3 = dmsToDd(parseFloat(document.getElementById('v3_'+prefix).value) || 0);
+        let v4 = dmsToDd(parseFloat(document.getElementById('v4_'+prefix).value) || 0);
+        
+        let ptr = dmsToDd(parseFloat(document.getElementById('ptr_'+prefix).value) || 0);
 
-        // Purata Ufuk (B) - Formula: (Hz1 + Hz2 + (Hz3-180) + (Hz4-180)) / 4
+        // Purata Ufuk ke Matahari
         let purataHz = (h1 + h2 + (h3 - 180) + (h4 - 180)) / 4;
         if (purataHz < 0) purataHz += 360;
 
-        // Purata Altitud (D) - Formula AM: ((90-V1)+(90-V2)+(V3-270)+(V4-270))/4
+        // Purata Altitud (D)
         let h_alt = ((90-v1) + (90-v2) + (v3-270) + (v4-270)) / 4;
 
         // Biasan & Bedalihat (E)
@@ -195,8 +241,14 @@
         let cosA = (Math.sin(d_rad) - (Math.sin(p_rad) * Math.sin(a_rad))) / (Math.cos(p_rad) * Math.cos(a_rad));
         cosA = Math.max(-1, Math.min(1, cosA));
         let az_dd = Math.acos(cosA) * 180 / Math.PI;
+        
+        // --- FORMULA BEARING GRID ---
+        // Formula: Purata TR + Azimut Matahari - Purata Ufuk ke Matahari + Tirusan
+        let bearingGrid = ptr + az_dd - purataHz + tirusanDd;
+        while (bearingGrid < 0) bearingGrid += 360;
+        while (bearingGrid >= 360) bearingGrid -= 360;
 
-        return { b: purataHz, d: h_alt, az: az_dd };
+        return { b: purataHz, d: h_alt, az: az_dd, grid: bearingGrid };
     }
 
     function kiraSemua() {
@@ -204,27 +256,33 @@
             let lat = dmsToDd(parseFloat(document.getElementById('latitud').value));
             let d1 = dmsToDd(parseFloat(document.getElementById('delta_s1').value));
             let d2 = dmsToDd(parseFloat(document.getElementById('delta_s2').value));
+            let tirusan = dmsToDd(parseFloat(document.getElementById('tirusan').value) || 0);
 
-            let s1 = hitungSet('s1', lat, d1);
-            let s2 = hitungSet('s2', lat, d2);
+            let s1 = hitungSet('s1', lat, d1, tirusan);
+            let s2 = hitungSet('s2', lat, d2, tirusan);
 
             // Papar Set 1
             document.getElementById('resB_s1').innerText = ddToDmsStr(s1.b);
             document.getElementById('resD_s1').innerText = ddToDmsStr(s1.d);
             document.getElementById('resAz_s1').innerText = ddToDmsStr(s1.az);
+            document.getElementById('resGrid_s1').innerText = ddToDmsStr(s1.grid);
 
             // Papar Set 2
             document.getElementById('resB_s2').innerText = ddToDmsStr(s2.b);
             document.getElementById('resD_s2').innerText = ddToDmsStr(s2.d);
             document.getElementById('resAz_s2').innerText = ddToDmsStr(s2.az);
+            document.getElementById('resGrid_s2').innerText = ddToDmsStr(s2.grid);
 
-            // Perbandingan
-            let diff = Math.abs(s1.az - s2.az) * 3600;
+            // Perbandingan & Rumusan
+            let diff = Math.abs(s1.grid - s2.grid) * 3600;
             document.getElementById('diffAz').innerText = Math.round(diff) + " saat";
-            document.getElementById('finalAverage').innerText = ddToDmsStr((s1.az + s2.az) / 2);
+            
+            let finalAvg = (s1.grid + s2.grid) / 2;
+            document.getElementById('finalAverage').innerText = ddToDmsStr(finalAvg);
 
         } catch (err) {
-            alert("Sila pastikan semua kotak data diisi dengan nombor yang betul!");
+            console.error(err);
+            alert("Sila pastikan koordinat dan data cerapan diisi dengan lengkap!");
         }
     }
 </script>
