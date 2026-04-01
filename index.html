@@ -62,22 +62,22 @@
                             <td>Waktu</td><td>P.Ki/Ka</td><td>Mengufuk (Hz)</td><td>Pugak (V)</td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t1_s1" placeholder="t1"></td><td>P.Ki</td>
+                            <td><input type="number" step="any" id="t1_s1" placeholder="9.00"></td><td>P.Ki</td>
                             <td><input type="number" step="any" id="h1_s1" placeholder="Hz1"></td>
                             <td><input type="number" step="any" id="v1_s1" placeholder="V1"></td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t2_s1" placeholder="t2"></td><td>P.Ki</td>
+                            <td><input type="number" step="any" id="t2_s1" placeholder="9.01"></td><td>P.Ki</td>
                             <td><input type="number" step="any" id="h2_s1" placeholder="Hz2"></td>
                             <td><input type="number" step="any" id="v2_s1" placeholder="V2"></td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t3_s1" placeholder="t3"></td><td>P.Ka</td>
+                            <td><input type="number" step="any" id="t3_s1" placeholder="9.02"></td><td>P.Ka</td>
                             <td><input type="number" step="any" id="h3_s1" placeholder="Hz3"></td>
                             <td><input type="number" step="any" id="v3_s1" placeholder="V3"></td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t4_s1" placeholder="t4"></td><td>P.Ka</td>
+                            <td><input type="number" step="any" id="t4_s1" placeholder="9.03"></td><td>P.Ka</td>
                             <td><input type="number" step="any" id="h4_s1" placeholder="Hz4"></td>
                             <td><input type="number" step="any" id="v4_s1" placeholder="V4"></td>
                         </tr>
@@ -99,22 +99,22 @@
                             <td>Waktu</td><td>P.Ki/Ka</td><td>Mengufuk (Hz)</td><td>Pugak (V)</td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t1_s2" placeholder="t1"></td><td>P.Ki</td>
+                            <td><input type="number" step="any" id="t1_s2" placeholder="9.05"></td><td>P.Ki</td>
                             <td><input type="number" step="any" id="h1_s2" placeholder="Hz1"></td>
                             <td><input type="number" step="any" id="v1_s2" placeholder="V1"></td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t2_s2" placeholder="t2"></td><td>P.Ki</td>
+                            <td><input type="number" step="any" id="t2_s2" placeholder="9.06"></td><td>P.Ki</td>
                             <td><input type="number" step="any" id="h2_s2" placeholder="Hz2"></td>
                             <td><input type="number" step="any" id="v2_s2" placeholder="V2"></td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t3_s2" placeholder="t3"></td><td>P.Ka</td>
+                            <td><input type="number" step="any" id="t3_s2" placeholder="9.07"></td><td>P.Ka</td>
                             <td><input type="number" step="any" id="h3_s2" placeholder="Hz3"></td>
                             <td><input type="number" step="any" id="v3_s2" placeholder="V3"></td>
                         </tr>
                         <tr>
-                            <td><input type="text" id="t4_s2" placeholder="t4"></td><td>P.Ka</td>
+                            <td><input type="number" step="any" id="t4_s2" placeholder="9.08"></td><td>P.Ka</td>
                             <td><input type="number" step="any" id="h4_s2" placeholder="Hz4"></td>
                             <td><input type="number" step="any" id="v4_s2" placeholder="V4"></td>
                         </tr>
@@ -133,15 +133,15 @@
             <div class="row g-3">
                 <div class="col-md-4">
                     <label class="fw-bold">G. Lintang Stesen (φ)</label>
-                    <input type="number" id="latitud" class="form-control" placeholder="4.3520">
+                    <input type="number" id="latitud" step="any" class="form-control" placeholder="4.3520">
                 </div>
                 <div class="col-md-4">
                     <label class="fw-bold">Sudutistiwa (δ) Set 1</label>
-                    <input type="number" id="delta_s1" class="form-control" placeholder="2.1359">
+                    <input type="number" id="delta_s1" step="any" class="form-control" placeholder="2.1359">
                 </div>
                 <div class="col-md-4">
                     <label class="fw-bold">Sudutistiwa (δ) Set 2</label>
-                    <input type="number" id="delta_s2" class="form-control" placeholder="2.1402">
+                    <input type="number" id="delta_s2" step="any" class="form-control" placeholder="2.1402">
                 </div>
             </div>
             <button class="btn btn-dark w-100 mt-3 py-2 fw-bold" onclick="kiraSemua()">KIRA SEMUA JADUAL</button>
@@ -185,25 +185,30 @@
 </div>
 
 <script>
+    // FUNGSI BARU: Tukar nilai ddd.mmss kepada darjah perpuluhan (lebih stabil & tepat)
     function dmsToDd(val) {
         if (!val && val !== 0) return 0;
         let isNegative = val < 0;
-        let absVal = Math.abs(val);
-        let d = Math.floor(absVal);
-        let m = Math.floor((absVal - d) * 100);
-        let s = (absVal - d - (m / 100)) * 10000;
+        let str = Math.abs(parseFloat(val)).toFixed(4); // Pastikan ada 4 titik perpuluhan
+        let parts = str.split('.');
+        let d = parseInt(parts[0]);
+        let ms = (parts[1] || '0000').padEnd(4, '0');
+        let m = parseInt(ms.substring(0, 2));
+        let s = parseInt(ms.substring(2, 4));
         let dd = d + (m / 60) + (s / 3600);
         return isNegative ? -dd : dd;
     }
 
+    // FUNGSI BARU: Paparan format darjah minit saat yang lebih kemas
     function ddToDmsStr(dd) {
+        if (isNaN(dd)) return "-";
         let absDd = Math.abs(dd);
         let d = Math.floor(absDd);
         let m = Math.floor((absDd - d) * 60);
         let s = Math.round((absDd - d - (m / 60)) * 3600);
         if (s >= 60) { s = 0; m++; }
         if (m >= 60) { m = 0; d++; }
-        return (dd < 0 ? "-" : "") + d + "° " + m + "' " + s + "\"";
+        return (dd < 0 ? "-" : "") + d + "° " + String(m).padStart(2, '0') + "' " + String(s).padStart(2, '0') + "\"";
     }
 
     function hitungSet(prefix, lat, delta, tirusanDd) {
@@ -218,18 +223,27 @@
         let v4 = dmsToDd(parseFloat(document.getElementById('v4_'+prefix).value) || 0);
         
         let ptr = dmsToDd(parseFloat(document.getElementById('ptr_'+prefix).value) || 0);
+        
+        // Baca waktu pertama untuk tentukan pagi atau petang (Automatik)
+        let waktu = parseFloat(document.getElementById('t1_'+prefix).value) || 0;
 
-        // Purata Ufuk ke Matahari (Ditambah +180)
-        let purataHz = ((h1 + h2 + (h3 - 180) + (h4 - 180)) / 4) + 180;
-        while (purataHz < 0) purataHz += 360;
-        while (purataHz >= 360) purataHz -= 360;
+        // FUNGSI BARU: Purata Ufuk menggunakan Vektor (Menyelesaikan isu +180 atau lari kuadran)
+        let rad = Math.PI / 180;
+        let h3_adj = h3 >= 180 ? h3 - 180 : h3 + 180;
+        let h4_adj = h4 >= 180 ? h4 - 180 : h4 + 180;
+        
+        let sumSin = Math.sin(h1*rad) + Math.sin(h2*rad) + Math.sin(h3_adj*rad) + Math.sin(h4_adj*rad);
+        let sumCos = Math.cos(h1*rad) + Math.cos(h2*rad) + Math.cos(h3_adj*rad) + Math.cos(h4_adj*rad);
+        
+        let purataHz = Math.atan2(sumSin, sumCos) / rad;
+        if (purataHz < 0) purataHz += 360;
 
-        // Purata Altitud (D)
+        // Purata Altitud (D) (Anggapan input adalah sudut Zenit)
         let h_alt = ((90-v1) + (90-v2) + (v3-270) + (v4-270)) / 4;
 
         // Biasan & Bedalihat (E)
-        let h_rad = h_alt * Math.PI / 180;
-        let e_dd = ((41.4105 + (8.8 * Math.cos(h_rad))) / Math.tan(h_rad)) / 3600;
+        let h_rad_alt = h_alt * Math.PI / 180;
+        let e_dd = ((41.4105 + (8.8 * Math.cos(h_rad_alt))) / Math.tan(h_rad_alt)) / 3600;
 
         // Altitud Dilaras (Alpha)
         let alpha = h_alt - e_dd;
@@ -242,7 +256,12 @@
         let cosA = (Math.sin(d_rad) - (Math.sin(p_rad) * Math.sin(a_rad))) / (Math.cos(p_rad) * Math.cos(a_rad));
         cosA = Math.max(-1, Math.min(1, cosA));
         let az_dd = Math.acos(cosA) * 180 / Math.PI;
-        
+
+        // SEMAKAN WAKTU: Jika cerapan dibuat waktu petang (Waktu > 12.00), Azimut mesti 360 - Az
+        if (waktu >= 12.00) {
+            az_dd = 360 - az_dd;
+        }
+
         // --- FORMULA BEARING GRID ---
         let bearingGrid = ptr + az_dd - purataHz + tirusanDd;
         while (bearingGrid < 0) bearingGrid += 360;
@@ -253,9 +272,9 @@
 
     function kiraSemua() {
         try {
-            let lat = dmsToDd(parseFloat(document.getElementById('latitud').value));
-            let d1 = dmsToDd(parseFloat(document.getElementById('delta_s1').value));
-            let d2 = dmsToDd(parseFloat(document.getElementById('delta_s2').value));
+            let lat = dmsToDd(parseFloat(document.getElementById('latitud').value) || 0);
+            let d1 = dmsToDd(parseFloat(document.getElementById('delta_s1').value) || 0);
+            let d2 = dmsToDd(parseFloat(document.getElementById('delta_s2').value) || 0);
             let tirusan = dmsToDd(parseFloat(document.getElementById('tirusan').value) || 0);
 
             let s1 = hitungSet('s1', lat, d1, tirusan);
@@ -273,11 +292,18 @@
             document.getElementById('resAz_s2').innerText = ddToDmsStr(s2.az);
             document.getElementById('resGrid_s2').innerText = ddToDmsStr(s2.grid);
 
-            // --- BAHAGIAN YANG DIUBAH: Beza Bearing Grid dalam format DMS ---
+            // Pengiraan beza bearing selamat untuk mengelak ralat rentas 360°
             let diffDd = Math.abs(s1.grid - s2.grid);
+            if (diffDd > 180) diffDd = 360 - diffDd; // Contoh jika Set 1 = 359°, Set 2 = 1°
             document.getElementById('diffAz').innerText = ddToDmsStr(diffDd);
             
-            let finalAvg = (s1.grid + s2.grid) / 2;
+            // Pengiraan purata Bearing Grid akhir
+            let finalAvg;
+            if (Math.abs(s1.grid - s2.grid) > 180) {
+                finalAvg = ((s1.grid + s2.grid + 360) / 2) % 360;
+            } else {
+                finalAvg = (s1.grid + s2.grid) / 2;
+            }
             document.getElementById('finalAverage').innerText = ddToDmsStr(finalAvg);
 
         } catch (err) {
